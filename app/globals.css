@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/* Aktiver class-basert dark mode i Tailwind v4. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* Geist for hele dashbordet, system-fallback hvis fonten ikke laster. */
+  --font-sans: var(--font-geist-sans), -apple-system, system-ui, sans-serif;
+  /* JetBrains Mono brukes via .mono-klassen for datoer i tabellen. */
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular,
+    "SF Mono", Menlo, Consolas, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), -apple-system, system-ui, sans-serif;
+}
+
+/* Monospace-utility — brukes for datoer i tabellen og andre steder
+   der monospace gir reell verdi for skanning av tall/datoer. */
+.mono {
+  font-family: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular,
+    "SF Mono", Menlo, Consolas, monospace;
+  font-feature-settings: "ss01", "ss02";
+}
+
+/* Tabulære tall — sifre med lik bredde, så kolonner med tall står
+   pent justert. Funksjon i Geist (og de fleste moderne fonts). */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
