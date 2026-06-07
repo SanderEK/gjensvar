@@ -517,6 +517,12 @@ export default async function DashboardPage() {
   const activeClientName = activeClient?.name ?? null;
   const activeClientReportBrand = activeClient?.reportBrand ?? null;
 
+  const demoClientIds = (process.env.DEMO_CLIENT_IDS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const isDemoClient = demoClientIds.includes(clientId);
+
   return (
     <div className="relative min-h-screen bg-zinc-50 text-zinc-900 dark:bg-[#0a0a0a] dark:text-zinc-50">
       <Topbar
@@ -525,6 +531,7 @@ export default async function DashboardPage() {
         clients={clients}
         activeClientId={clientId}
         snapchatManualCount={snapchatVideosAll.length}
+        isDemoClient={isDemoClient}
       />
       <main className="px-6 py-10">
         <Suspense fallback={null}>

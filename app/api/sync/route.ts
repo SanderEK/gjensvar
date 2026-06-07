@@ -10,6 +10,7 @@ import {
   runTikTokSync,
   runYouTubeSync,
 } from "@/lib/syncRunner";
+import { runDemoSync } from "@/lib/demoSync";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,6 +32,19 @@ export async function POST() {
 
   const supabase = await getSupabaseServerClient();
 
+  // Demo-modus: bytter ut de ekte plattform-runnerne med en simulert versjon
+  // som genererer dummy-data. To måter å aktivere på:
+  //   1) DEMO_SYNC=true             – globalt (alle kunder). Kun for lokal dev.
+  //   2) DEMO_CLIENT_IDS=uuid1,uuid2 – per-kunde. Trygt å bruke i produksjon.
+  //                                    Kun de listede kundenes synk simuleres;
+  //                                    alle andre kunder bruker ekte synk.
+  const demoClientIds = (process.env.DEMO_CLIENT_IDS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const isDemoMode =
+    process.env.DEMO_SYNC === "true" || demoClientIds.includes(clientId);
+
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream<Uint8Array>({
@@ -46,6 +60,12 @@ export async function POST() {
           console.error("Stream emit feilet:", err);
         }
       };
+
+      if (isDemoMode) {
+        await runDemoSync(supabase, clientId, emit);
+        controller.close();
+        return;
+      }
 
       const runners: Record<Platform, () => Promise<void>> = {
         instagram: () => runInstagramSync(supabase, clientId, emit),

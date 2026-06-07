@@ -9,6 +9,7 @@ import { LogoutButton } from "./LogoutButton";
 import { ClientSwitcher } from "./ClientSwitcher";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
+import { DemoResetButton } from "./DemoResetButton";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import type { ConnectedAccountInfo } from "@/app/dashboard/page";
 
@@ -26,12 +27,14 @@ export function Topbar({
   clients = [],
   activeClientId = null,
   snapchatManualCount = 0,
+  isDemoClient = false,
 }: {
   connectedAccounts?: ConnectedAccountInfo[];
   userEmail?: string | null;
   clients?: ClientInfo[];
   activeClientId?: string | null;
   snapchatManualCount?: number;
+  isDemoClient?: boolean;
 }) {
   const isAdmin = !!userEmail && ADMIN_EMAILS.includes(userEmail);
 
@@ -68,6 +71,7 @@ export function Topbar({
 
         {/* Høyre: synk + språk + tema + logout */}
         <div className="ml-auto flex items-center gap-2">
+          {isDemoClient ? <DemoResetButton /> : null}
           <SyncAllButton />
           <LanguageToggle variant="dashboard" />
           <ThemeToggle />
